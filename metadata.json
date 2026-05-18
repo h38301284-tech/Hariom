@@ -1,0 +1,6 @@
+{
+  "name": "VoiceClone AI",
+  "description": "Clone any voice instantly with AI and generate lifelike speech in multiple languages.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
