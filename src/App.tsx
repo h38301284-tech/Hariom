@@ -26,7 +26,6 @@ import ContentStudio from "./ContentStudio";
 import { INDIAN_LANGUAGES, GLOBAL_LANGUAGES, AI_FEATURES, PRICING_PLANS } from "./constants";
 
 export default function App() {
-  if (window.location.pathname === "/content-studio") return <ContentStudio />;
   const [file, setFile] = useState<File | null>(null);
   const [text, setText] = useState("");
   const [voiceName, setVoiceName] = useState("");
@@ -112,6 +111,8 @@ export default function App() {
     link.download = "voiceclone_output.mp3";
     link.click();
   };
+
+  if (window.location.pathname === "/content-studio") return <ContentStudio />;
 
   return (
     <div className="min-h-screen bg-[#050816] text-white font-sans selection:bg-purple-500/30 overflow-x-hidden">
