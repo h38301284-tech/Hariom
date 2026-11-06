@@ -50,6 +50,51 @@ async function startServer() {
   });
 
   // API Routes
+
+  // AI content pack generation (scripts, SEO metadata and storyboards).
+  app.post("/api/content-pack", async (req: Request, res: Response) => {
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) return res.status(500).json({ error: "GEMINI_API_KEY is not configured on the server." });
+      const { channel, topic, format, language, duration, extra, channelProfile } = req.body || {};
+      if (typeof topic !== "string" || !topic.trim() || topic.length > 500) {
+        return res.status(400).json({ error: "Enter a topic (maximum 500 characters)." });
+      }
+      const safe = (value: unknown, fallback: string, max = 100) =>
+        typeof value === "string" ? value.slice(0, max) : fallback;
+      const prompt = [
+        "You are an expert YouTube content producer. Create one complete, original, ready-to-edit content pack.",
+        "Channel: " + safe(channel, "General"),
+        "Channel style: " + safe(channelProfile, "Clear, engaging and useful.", 1200),
+        "Topic: " + topic.trim(),
+        "Format: " + safe(format, "YouTube Short"),
+        "Language: " + safe(language, "Hinglish"),
+        "Target duration: " + safe(duration, "35 seconds"),
+        "Additional direction: " + safe(extra, "None", 1000),
+        "",
+        "Return well-structured Markdown with these sections:",
+        "1. 3 clickable but honest title options",
+        "2. 3 opening hooks",
+        "3. Full narration script with natural spoken language and pacing cues",
+        "4. Scene-by-scene storyboard in a table: time, narration, visual direction, on-screen text, sound",
+        "5. Thumbnail concept and 3 short thumbnail text options",
+        "6. SEO description, relevant hashtags and searchable tags",
+        "7. A concise call to action",
+        "",
+        "Keep the script aligned with the target duration. Avoid fabricated facts, fake statistics, misleading claims and guaranteed outcomes. For finance, make educational content and include appropriate risk context. For anime, clearly mark uncertain details as theories and do not invent canon events. Do not claim the content has been fact-checked or published."
+      ].join("\n");
+      const { GoogleGenAI } = await import("@google/genai");
+      const ai = new GoogleGenAI({ apiKey });
+      const result = await ai.models.generateContent({ model: "gemini-2.5-flash", contents: prompt });
+      const content = result.text || "";
+      if (!content.trim()) return res.status(502).json({ error: "The AI returned an empty response. Please try again." });
+      return res.json({ content });
+    } catch (error: any) {
+      console.error("Content pack generation failed:", error?.message || error);
+      return res.status(500).json({ error: "Content generation failed. Check the Gemini API configuration and try again." });
+    }
+  });
+
   app.post("/api/clone-and-speak", upload.single("sample"), async (req: Request, res: Response) => {
     try {
       const apiKey = process.env.ELEVENLABS_API_KEY;
