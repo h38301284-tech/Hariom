@@ -22,6 +22,7 @@ import {
   User
 } from "lucide-react";
 import axios from "axios";
+import ContentStudio from "./ContentStudio";
 import { INDIAN_LANGUAGES, GLOBAL_LANGUAGES, AI_FEATURES, PRICING_PLANS } from "./constants";
 
 export default function App() {
@@ -111,6 +112,8 @@ export default function App() {
     link.click();
   };
 
+  if (window.location.pathname === "/content-studio") return <ContentStudio />;
+
   return (
     <div className="min-h-screen bg-[#050816] text-white font-sans selection:bg-purple-500/30 overflow-x-hidden">
       {/* Background Image/Glow */}
@@ -137,6 +140,7 @@ export default function App() {
         <div className="hidden md:flex space-x-8 text-sm font-medium text-gray-400">
           <a href="#" className="hover:text-cyan-400 transition-colors">Home</a>
           <a href="#" className="hover:text-cyan-400 transition-colors text-cyan-300">Voice Studio</a>
+          <a href="/content-studio" className="hover:text-cyan-400 transition-colors">Content Studio</a>
           <a href="#pricing" className="hover:text-cyan-400 transition-colors">Pricing</a>
           <a href="mailto:h38301284@gmail.com" className="hover:text-cyan-400 transition-colors">Contact</a>
         </div>
